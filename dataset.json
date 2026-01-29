@@ -1,0 +1,13 @@
+[
+  {
+    "question": "Great Wall of China ke kisi bhi hissay mein koi taaqat (force) ya baari (load) daaltay waqt, usay na sirf dhairan (foundation) mein halka sa phailna (settlement) aata hai, balkay qareeb qareeb ke hissay mein bhi dhairan mein kachra (cracks) aa saktay hain. Is ke asli sabab kya hai?",
+    "reasons": [
+      "Yeh taaqat (force) sirf dhairan ke upar mabni (built) hai, na ke dhairan ke neechay.",
+      "Isay makhlooq (artificial) banaaya gaya hai, isliye usay khud ki taaqat (self-weight) ki wajah se darr nahi lagta.",
+      "Zameen ki dhairan (earthquake) dhalne ke baad, qareeb qareeb ke hissay ko dhairan ki wajah se ghaib (invisible) haath lagta hai jo qareeb ke hissay mein dhairan mein dhairan (settlement) kar deta hai."
+    ],
+    "selected_reason": "Zameen ki dhairan (earthquake) dhalne ke baad, qareeb qareeb ke hissay ko dhairan ki wajah se ghaib haath lagta hai jo dhairan mein dhairan (settlement) kar deta hai.",
+    "why_selected": "Zameen ki dhairan ki wajah se dhairan mein phailna (settlement) hi tabhi aata hai jab mabni taaqat (building load) dhairan se zyada hoti hai, jo is qasr ke asli sabab hai.",
+    "answer": "Zameen ki dhairan (earthquake) dhalne ke baad, qareeb qareeb ke hissay ko dhairan ki wajah se ghaib haath lagta hai jo dhairan mein dhairan (settlement) kar deta hai, isliye kachray (cracks) aate hain."
+  }
+]

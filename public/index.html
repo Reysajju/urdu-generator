@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اردو مصنوعی مواد کا جنریٹر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #dc2626;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 2.2;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        .btn {
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-start {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-stop {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-right: 5px solid var(--primary);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-idle {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .label {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .history-item {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .history-item:hover {
+            background: #f8fafc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>اردو مصنوعی مواد کا جنریٹر</h1>
+            <p>پس منظر میں خودکار ڈیٹا کی تیاری (Supabase کے تعاون سے)</p>
+            <div class="controls">
+                <button id="toggleBtn" class="btn btn-start">شروع کریں</button>
+            </div>
+            <div id="statusBadge" class="status-badge status-idle">رکا ہوا ہے</div>
+        </div>
+
+        <div id="latestData">
+            <h2 style="text-align:center;">تازہ ترین ڈیٹا</h2>
+            <div id="displayArea"></div>
+        </div>
+
+        <div id="history">
+            <h2 style="text-align:center;">تاریخچہ (Supabase)</h2>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleBtn');
+        const statusBadge = document.getElementById('statusBadge');
+        let isRunning = false;
+
+        async function updateStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                isRunning = data.isGenerating;
+
+                if (isRunning) {
+                    toggleBtn.textContent = 'روک دیں';
+                    toggleBtn.className = 'btn btn-stop';
+                    statusBadge.textContent = 'ڈیٹا بن رہا ہے...';
+                    statusBadge.className = 'status-badge status-active';
+                } else {
+                    toggleBtn.textContent = 'شروع کریں';
+                    toggleBtn.className = 'btn btn-start';
+                    statusBadge.textContent = 'رکا ہوا ہے';
+                    statusBadge.className = 'status-badge status-idle';
+                }
+            } catch (e) {
+                console.error("Status check failed", e);
+            }
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch('/api/dataset');
+                const data = await res.json();
+
+                if (!Array.isArray(data)) {
+                    console.error("Dataset load error", data);
+                    return;
+                }
+
+                if (data.length > 0) {
+                    const latest = data[0];
+                    document.getElementById('displayArea').innerHTML = `
+                        <div class="card">
+                            <span class="label">سوال:</span>
+                            <p>${latest.question}</p>
+                            <span class="label">جواب:</span>
+                            <p>${latest.answer}</p>
+                            <small style="color:#94a3b8">ماڈل: ${latest.model || 'Unknown'} | وقت: ${new Date(latest.created_at).toLocaleTimeString()}</small>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('historyList').innerHTML = data.slice(1).map(item => `
+                    <div class="card history-item" style="font-size: 0.95rem;">
+                        <strong>سوال:</strong> ${item.question}
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error("Error loading data:", err);
+            }
+        }
+
+        toggleBtn.onclick = async () => {
+            const endpoint = isRunning ? '/api/stop' : '/api/start';
+            await fetch(endpoint, { method: 'POST' });
+            updateStatus();
+        };
+
+        setInterval(() => {
+            updateStatus();
+            loadData();
+        }, 5000);
+
+        updateStatus();
+        loadData();
+    </script>
+</body>
+
+</html>
