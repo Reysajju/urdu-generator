@@ -47,6 +47,9 @@ let isGenerating = false;
 let stopRequested = false;
 
 async function generateData() {
+    if (!API_KEY || API_KEY === 'put_your_key_here') {
+        throw new Error("API Key is missing or using placeholder in .env");
+    }
     const userPrompt = "Generate a complex reasoning question in Urdu about history, science, or general knowledge.";
 
     for (const model of MODELS) {
