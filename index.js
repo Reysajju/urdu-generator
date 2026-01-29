@@ -143,7 +143,14 @@ app.get('/api/dataset', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`\nServer is running at http://localhost:${PORT}`);
-    console.log(`Supabase Connected: ${supabaseUrl}`);
-});
+// Export for Vercel
+module.exports = app;
+
+// Only listen if run directly (local development)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`\nServer is running at http://localhost:${PORT}`);
+        console.log(`Supabase Connected: ${supabaseUrl}`);
+    });
+}
+
